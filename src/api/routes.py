@@ -32,6 +32,8 @@ def create_user():
     password = request_body['password'] 
 
     user = User(email = email, password = password, is_active = True)
+    print(user)
+
 
     db.session.add(user)
     db.session.commit()
@@ -57,7 +59,7 @@ def login_user():
         return jsonify({"msg": "Usuario o contraseña incorrecta"}), 404
     
     else: 
-        access_token = create_access_token(identity = user.id)
+        access_token = create_access_token(identity = user.email)
         return jsonify({"token": access_token, "user_id": user.id}), 200
 
 
@@ -65,6 +67,7 @@ def login_user():
 @api.route('/private', methods=['GET'])
 @jwt_required()  
 def private_route():
+    print("hola")
     current_user = get_jwt_identity()
     
     response_body = {

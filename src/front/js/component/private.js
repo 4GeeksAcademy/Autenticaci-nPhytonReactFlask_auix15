@@ -5,15 +5,13 @@ import { useNavigate } from "react-router-dom";
 
 const PrivatePage = () => {
     const{actions,store} = useContext(Context)
+    const navigate = useNavigate()
     const handleLogout = () => {
-        // Aquí puedes agregar la lógica de logout, como redirigir al login o limpiar tokens.
-        alert("You have been logged out.");
-        // Redirigir al login (si usas React Router, usa navigate)
-        window.location.href = "/login"; // Cambia esto según tu routing
+        actions.logout(navigate)
     };
-const navigate = useNavigate()
+
 useEffect(()=>{
-    if (store.token === null) {
+    if (localStorage.getItem("token") === null) {
     navigate("/")
     }
   actions.getPrivateData()

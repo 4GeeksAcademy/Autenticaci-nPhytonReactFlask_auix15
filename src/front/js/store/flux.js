@@ -50,6 +50,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     if (response.ok) {
                         const data = await response.json();
                         setStore({ token: data.token, user: data.user, loading: false }); // Guarda el token y los datos del usuario
+                        localStorage.setItem("token", data.token)
                         console.log("User successfully logged in.");
                         navigate("/private"); // Redirige al área protegida
                     } else {
@@ -68,7 +69,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             // Acción para obtener datos privados protegidos
             getPrivateData: async () => {
                 const store = getStore();
-                if (!store.token) {
+                if (!localStorage.getItem("token")) {
                     console.log("No token found. User is not authenticated.");
                     return;
                 }
@@ -77,7 +78,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/private`, {
                         method: "GET",
                         headers: {
-                            "Authorization": `Bearer ${store.token}`
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`
                         }
                     });
 
@@ -95,9 +96,11 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             // Acción para cerrar sesión
-            logout: () => {
+            logout: (navigate) => {
                 setStore({ token: null, user: null }); // Limpia el token y los datos del usuario
+                localStorage.removeItem("token")
                 console.log("User logged out.");
+                navigate("/")
             },
 
             // Acción para obtener un mensaje
